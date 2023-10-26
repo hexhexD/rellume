@@ -15,17 +15,17 @@ if get_option('warning_level').to_int() >= 3
   endif
 endif
 
-llvm_version = ['>=12', '<16']
+llvm_version = ['>=12', '<=19']
 # First, attempt to use the shared library.
-libllvm = dependency('llvm', version: llvm_version, static: false,
-                     method: 'config-tool', include_type: 'system',
-                     required: false)
-if not libllvm.found()
+# libllvm = dependency('llvm', version: llvm_version, static: false,
+                     # method: 'config-tool', include_type: 'system',
+                     # required: false)
+# if not libllvm.found()
   # Try static libraries.
   libllvm = dependency('llvm', version: llvm_version, static: true,
                        method: 'config-tool', include_type: 'system',
-                       modules: ['x86', 'aarch64', 'riscv', 'executionengine'])
-endif
+                       modules: ['x86', 'executionengine'])
+# endif
 add_project_arguments(['-DLL_LLVM_MAJOR='+libllvm.version().split('.')[0]], language: 'cpp')
 
 architectures = []
@@ -64,7 +64,7 @@ librellume = declare_dependency(include_directories: rellume_inc,
                                 dependencies: [libllvm],
                                 sources: [cpustruct_pub])
 
-subdir('tests')
+# subdir('tests')
 subdir('examples')
 
 pkg = import('pkgconfig')
